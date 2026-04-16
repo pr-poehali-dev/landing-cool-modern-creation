@@ -1,117 +1,130 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Icon from "@/components/ui/icon";
 
+/* ─── DATA ─── */
 const HOUSES = [
   {
-    img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/69021e68-670b-4e9e-b23f-29dc2b9d4113.jpg",
-    title: "Шале 6х8",
+    img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/3a10e71d-ef93-4b53-8b41-da3c7a52c0ec.jpg",
+    title: "Шале 6×8",
     area: "48 м²",
     price: "от 996 000 ₽",
     oldPrice: null,
-    tag: null,
-    desc: "Возможны иные размеры. Каркасный дом с открытой верандой.",
+    badge: null,
+    tag: "Хит продаж",
+    desc: "Каркасный дом с открытой верандой. Тёмное дерево и стекло.",
   },
   {
-    img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/4013a940-dad2-4eb1-8d15-de0539785d73.jpg",
-    title: "Шале 6х6",
+    img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/c9b8c086-0c50-4b98-92de-0db2c68899ee.jpg",
+    title: "Шале 6×6",
     area: "36 м²",
     price: "от 790 000 ₽",
     oldPrice: "970 000 ₽",
-    tag: "%",
-    desc: "Возможны иные размеры. Уютный дом в скандинавском стиле.",
+    badge: "Акция",
+    tag: "Скандинав",
+    desc: "Светлый дом в скандинавском стиле. Плоская кровля.",
   },
   {
-    img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/4180846d-3d0c-4f6a-9770-3cc8f41a7205.jpg",
-    title: "Дом 8х8м",
+    img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/b54beb16-2abf-4dac-aa20-162d1cb3b35d.jpg",
+    title: "Дом 8×8",
     area: "64 м²",
     price: "от 1 101 000 ₽",
     oldPrice: null,
-    tag: null,
-    desc: "Возможны иные размеры. Просторный семейный дом.",
+    badge: null,
+    tag: "Премиум",
+    desc: "Тёмный антрацит и дерево. Панорамные окна.",
   },
   {
-    img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/6e0ae0eb-a489-4c69-b87f-ae0b155a2a2d.jpg",
-    title: "Дом Дачный 5х6м",
+    img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/a05fb1e0-6538-4d41-85b9-0e4864f13ea1.jpg",
+    title: "Дачный 5×6",
     area: "30 м²",
     price: "от 496 000 ₽",
     oldPrice: null,
-    tag: null,
-    desc: "Возможны иные размеры. Бюджетный дачный домик.",
+    badge: null,
+    tag: "Эконом",
+    desc: "Тёплый кедровый домик с открытой верандой.",
   },
   {
-    img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/a327a87f-13f2-47d3-aade-aaa8f2c14944.jpg",
-    title: "Дом 8х10м",
+    img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/015baeb7-74ae-4fd2-8ced-cea95b0ef9b7.jpg",
+    title: "Дом 8×10",
     area: "80 м²",
     price: "от 1 450 000 ₽",
     oldPrice: null,
-    tag: "Новинка",
-    desc: "Двухэтажный дом с балконом. Большие окна.",
+    badge: "Новинка",
+    tag: "Два этажа",
+    desc: "Двухэтажный. Чёрная сталь и дерево. Балкон.",
   },
   {
-    img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/e32c9813-fdfe-4bd6-93bf-8926d889d58f.jpg",
-    title: "Баня 4х6м",
+    img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/c5800bf9-4934-4837-821b-d3e97c7776c8.jpg",
+    title: "Баня 4×6",
     area: "24 м²",
     price: "от 380 000 ₽",
     oldPrice: null,
-    tag: null,
-    desc: "Классическая русская баня. Под ключ.",
+    badge: null,
+    tag: "Баня",
+    desc: "Классическая русская баня. Тёмные брёвна.",
   },
 ];
 
 const WHY = [
-  { icon: "ShieldCheck", title: "Гарантия 5 лет", desc: "Даём официальную гарантию на все конструктивные элементы дома" },
-  { icon: "Wallet", title: "Фиксированная цена", desc: "Стоимость в договоре не меняется. Никаких доп. расходов в процессе" },
-  { icon: "Clock", title: "Срок от 45 дней", desc: "Строим быстро, без задержек. Чёткие сроки зафиксированы в договоре" },
-  { icon: "Truck", title: "Доставка по России", desc: "Работаем по всей России. Доставляем материалы и команду к вам" },
-  { icon: "FileText", title: "Договор и смета", desc: "Полный пакет документов: договор, смета, технический паспорт" },
-  { icon: "Home", title: "Под ключ", desc: "Сдаём готовый дом: фундамент, стены, кровля, отделка, коммуникации" },
+  { icon: "ShieldCheck", title: "Гарантия 5 лет", desc: "Официальная гарантия на все конструктивные элементы" },
+  { icon: "Wallet", title: "Цена в договоре", desc: "Фиксированная стоимость — без сюрпризов в процессе" },
+  { icon: "Clock", title: "Срок от 45 дней", desc: "Чёткие сроки. Фотоотчёт каждую неделю" },
+  { icon: "Truck", title: "По всей России", desc: "Доставляем команду и материалы в любой регион" },
+  { icon: "FileText", title: "Полный пакет", desc: "Договор, смета, технический паспорт" },
+  { icon: "Home", title: "Под ключ", desc: "Фундамент, стены, кровля, отделка, коммуникации" },
 ];
 
 const PROCESS = [
-  { num: "01", title: "Заявка и консультация", desc: "Оставляете заявку — менеджер перезванивает в течение 15 минут, отвечает на все вопросы." },
-  { num: "02", title: "Выбор проекта", desc: "Подбираем проект под ваш участок и бюджет. Возможна доработка под ваши пожелания." },
-  { num: "03", title: "Договор и смета", desc: "Заключаем договор с фиксированной стоимостью. Никаких скрытых платежей." },
-  { num: "04", title: "Строительство", desc: "Наша бригада приступает к работе. Присылаем фотоотчёт каждую неделю." },
-  { num: "05", title: "Сдача объекта", desc: "Принимаете готовый дом, подписываем акт приёма-передачи. Даём гарантию." },
+  { title: "Заявка", desc: "Перезваниваем в течение 15 минут" },
+  { title: "Проект", desc: "Подбираем под участок и бюджет" },
+  { title: "Договор", desc: "Фиксируем стоимость и сроки" },
+  { title: "Стройка", desc: "Фотоотчёт каждую неделю" },
+  { title: "Сдача", desc: "Подписываем акт, выдаём гарантию" },
 ];
 
 const REVIEWS = [
-  {
-    name: "Андрей К.",
-    city: "Самара",
-    text: "Заказали шале 6х8 — построили за 55 дней. Всё чётко по договору, никаких доп. расходов. Качество отличное, соседи уже спрашивают контакты.",
-    stars: 5,
-  },
-  {
-    name: "Ольга М.",
-    city: "Казань",
-    text: "Давно мечтала о своей даче. СК Дача №1 сделали проект под наш участок, всё объяснили, держали в курсе. Очень довольна результатом!",
-    stars: 5,
-  },
-  {
-    name: "Василий П.",
-    city: "Уфа",
-    text: "Брали дом 8х8. Стройка заняла 60 дней. Фотоотчёты присылали каждую неделю — было приятно видеть прогресс. Рекомендую всем!",
-    stars: 5,
-  },
+  { name: "Андрей К.", city: "Самара", text: "Шале 6×8 построили за 55 дней — всё чётко по договору. Качество отличное, соседи уже спрашивают контакты.", stars: 5 },
+  { name: "Ольга М.", city: "Казань", text: "Мечтала о своей даче много лет. Сделали проект под участок, держали в курсе на каждом этапе. Очень довольна!", stars: 5 },
+  { name: "Василий П.", city: "Уфа", text: "Дом 8×8 за 60 дней. Еженедельные фотоотчёты — было приятно видеть прогресс. Рекомендую!", stars: 5 },
 ];
 
 const STATS = [
   { num: "500+", label: "домов построено" },
   { num: "5", label: "лет на рынке" },
-  { num: "45", label: "дней от начала до сдачи" },
-  { num: "100%", label: "клиентов довольны" },
+  { num: "45", label: "дней до сдачи" },
+  { num: "5", label: "лет гарантии" },
 ];
 
+/* ─── COLORS ─── */
+const C = {
+  bg: "#0e1a14",
+  surface: "#162012",
+  card: "#1c2a1c",
+  border: "rgba(255,255,255,0.07)",
+  gold: "#c9a96e",
+  goldLight: "#e8c987",
+  text: "#f0ede8",
+  muted: "rgba(240,237,232,0.5)",
+  green: "#1e3d2a",
+};
+
+/* ─── COMPONENT ─── */
 const Index = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [phone, setPhone] = useState("");
-  const [formSent, setFormSent] = useState(false);
-  const [orderForm, setOrderForm] = useState({ name: "", phone: "", comment: "" });
-  const [orderSent, setOrderSent] = useState(false);
   const [activeHouse, setActiveHouse] = useState<number | null>(null);
   const [filter, setFilter] = useState("Все");
+  const [phone, setPhone] = useState("");
+  const [heroSent, setHeroSent] = useState(false);
+  const [orderForm, setOrderForm] = useState({ name: "", phone: "", comment: "" });
+  const [orderSent, setOrderSent] = useState(false);
+  const [heroImg, setHeroImg] = useState(0);
+
+  const heroImages = [
+    "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/3a10e71d-ef93-4b53-8b41-da3c7a52c0ec.jpg",
+    "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/b54beb16-2abf-4dac-aa20-162d1cb3b35d.jpg",
+    "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/015baeb7-74ae-4fd2-8ced-cea95b0ef9b7.jpg",
+  ];
 
   const filters = ["Все", "до 500 000 ₽", "500 000 – 1 млн", "от 1 млн"];
 
@@ -125,235 +138,191 @@ const Index = () => {
   });
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener("scroll", onScroll);
 
+    // Hero slideshow
+    const timer = setInterval(() => setHeroImg(p => (p + 1) % heroImages.length), 5000);
+
+    // Scroll reveal
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("revealed");
-          }
-        });
-      },
-      { threshold: 0.1 }
+      (entries) => entries.forEach(e => e.isIntersecting && e.target.classList.add("sr-visible")),
+      { threshold: 0.08 }
     );
-    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+    document.querySelectorAll(".sr").forEach(el => observer.observe(el));
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", onScroll);
+      clearInterval(timer);
       observer.disconnect();
     };
   }, []);
 
-  const scrollTo = (id: string) => {
+  const go = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     setMenuOpen(false);
   };
 
-  const handleQuickSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormSent(true);
-  };
-
-  const handleOrderSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setOrderSent(true);
-  };
-
   return (
-    <div style={{ background: "#fff", color: "#1a1a1a", fontFamily: "'Golos Text', sans-serif" }} className="min-h-screen overflow-x-hidden">
+    <div style={{ background: C.bg, color: C.text, fontFamily: "'Golos Text', sans-serif", minHeight: "100vh", overflowX: "hidden" }}>
+
+      {/* ── STYLES ── */}
+      <style>{`
+        .sr { opacity: 0; transform: translateY(32px); transition: opacity .8s ease, transform .8s ease; }
+        .sr-visible { opacity: 1; transform: none; }
+        .sr.d1 { transition-delay: .1s; }
+        .sr.d2 { transition-delay: .2s; }
+        .sr.sr.d3 { transition-delay: .3s; }
+        .house-card:hover .house-img { transform: scale(1.06); }
+        .house-card:hover { border-color: rgba(201,169,110,0.35) !important; }
+        .why-card:hover { background: #1e3d2a !important; border-color: rgba(201,169,110,0.25) !important; }
+        .process-item:hover .proc-num { color: ${C.gold} !important; }
+        .btn-gold { transition: all .25s; }
+        .btn-gold:hover { background: ${C.goldLight} !important; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(201,169,110,0.35); }
+        .btn-outline:hover { background: rgba(201,169,110,0.08) !important; border-color: ${C.gold} !important; }
+        .nav-link:hover { color: ${C.gold} !important; }
+        input:focus, textarea:focus { border-color: ${C.gold} !important; outline: none; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: ${C.bg}; }
+        ::-webkit-scrollbar-thumb { background: ${C.gold}; border-radius: 2px; }
+        @keyframes fadeSlide { from { opacity: 0; } to { opacity: 1; } }
+        .hero-img { animation: fadeSlide .8s ease; }
+        .tag-pill { backdrop-filter: blur(8px); }
+      `}</style>
 
       {/* ── NAV ── */}
-      <nav
-        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-        style={{
-          background: scrolled ? "rgba(255,255,255,0.97)" : "#fff",
-          boxShadow: scrolled ? "0 2px 20px rgba(0,0,0,0.08)" : "0 1px 0 #eee",
-        }}
-      >
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <nav style={{
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+        background: scrolled ? "rgba(14,26,20,0.97)" : "transparent",
+        backdropFilter: scrolled ? "blur(20px)" : "none",
+        borderBottom: scrolled ? `1px solid ${C.border}` : "none",
+        transition: "all .4s",
+      }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", height: 68, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24 }}>
           {/* Logo */}
-          <button onClick={() => scrollTo("hero")} className="flex items-center gap-2 shrink-0" style={{ background: "none", border: "none" }}>
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: "#f5a623" }}>
+          <button onClick={() => go("hero")} style={{ background: "none", border: "none", display: "flex", alignItems: "center", gap: 10, cursor: "pointer", flexShrink: 0 }}>
+            <div style={{ width: 38, height: 38, borderRadius: 10, background: `linear-gradient(135deg, ${C.gold}, #a07840)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <Icon name="Home" size={18} style={{ color: "#fff" }} />
             </div>
-            <div className="leading-tight">
-              <div className="font-black text-base" style={{ color: "#f5a623", fontFamily: "'Oswald', sans-serif" }}>СК ДАЧА №1</div>
-              <div className="text-xs" style={{ color: "#888" }}>строим дома</div>
+            <div style={{ textAlign: "left" }}>
+              <div style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 900, fontSize: 16, color: C.gold, letterSpacing: 1 }}>СК ДАЧА №1</div>
+              <div style={{ fontSize: 10, color: C.muted, letterSpacing: 1 }}>СТРОИМ ДОМА</div>
             </div>
           </button>
 
-          {/* Nav links */}
-          <div className="hidden md:flex items-center gap-6">
-            {[["Каталог", "catalog"], ["О компании", "about"], ["Процесс", "process"], ["Отзывы", "reviews"]].map(([label, id]) => (
-              <button key={id} onClick={() => scrollTo(id)} className="text-sm font-medium transition-colors hover:text-orange-500" style={{ background: "none", border: "none", color: "#444" }}>
-                {label}
-              </button>
+          {/* Desktop links */}
+          <div style={{ display: "none", alignItems: "center", gap: 32 }} className="hidden md:flex">
+            {[["Каталог", "catalog"], ["О нас", "about"], ["Процесс", "process"], ["Отзывы", "reviews"]].map(([l, id]) => (
+              <button key={id} onClick={() => go(id)} className="nav-link" style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14, color: C.muted, fontWeight: 500, transition: "color .2s", letterSpacing: .3 }}>{l}</button>
             ))}
           </div>
 
-          {/* Phone + CTA */}
-          <div className="hidden md:flex items-center gap-4">
-            <a href="tel:+79273401893" className="flex items-center gap-2 text-sm font-bold" style={{ color: "#1a1a1a", textDecoration: "none" }}>
-              <Icon name="Phone" size={16} style={{ color: "#f5a623" }} />
+          {/* CTA */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <a href="tel:+79273401893" style={{ display: "flex", alignItems: "center", gap: 6, textDecoration: "none", color: C.text, fontSize: 14, fontWeight: 700 }} className="hidden md:flex">
+              <Icon name="Phone" size={15} style={{ color: C.gold }} />
               +7 927-340-18-93
             </a>
-            <button
-              onClick={() => scrollTo("order")}
-              className="px-5 py-2.5 rounded-lg font-bold text-sm text-white transition-all hover:scale-105"
-              style={{ background: "#f5a623" }}
-            >
-              Оставить заявку
+            <button onClick={() => go("order")} className="btn-gold hidden md:block" style={{ padding: "10px 22px", borderRadius: 10, background: C.gold, color: "#0e1a14", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}>
+              Заявка
+            </button>
+            <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden" style={{ background: "none", border: "none", cursor: "pointer" }}>
+              <Icon name={menuOpen ? "X" : "Menu"} size={24} style={{ color: C.text }} />
             </button>
           </div>
-
-          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden" style={{ background: "none", border: "none" }}>
-            <Icon name={menuOpen ? "X" : "Menu"} size={24} style={{ color: "#1a1a1a" }} />
-          </button>
         </div>
 
+        {/* Mobile menu */}
         {menuOpen && (
-          <div className="md:hidden border-t px-4 py-4 space-y-3" style={{ borderColor: "#eee", background: "#fff" }}>
-            {[["Каталог", "catalog"], ["О компании", "about"], ["Процесс", "process"], ["Отзывы", "reviews"]].map(([label, id]) => (
-              <button key={id} onClick={() => scrollTo(id)} className="block w-full text-left py-2 font-medium text-sm" style={{ background: "none", border: "none", color: "#444" }}>
-                {label}
-              </button>
+          <div style={{ background: "rgba(14,26,20,0.99)", borderTop: `1px solid ${C.border}`, padding: "16px 24px 24px" }}>
+            {[["Каталог", "catalog"], ["О нас", "about"], ["Процесс", "process"], ["Отзывы", "reviews"], ["Заявка", "order"]].map(([l, id]) => (
+              <button key={id} onClick={() => go(id)} style={{ display: "block", width: "100%", textAlign: "left", padding: "12px 0", background: "none", border: "none", cursor: "pointer", color: C.muted, fontSize: 15, fontWeight: 500, borderBottom: `1px solid ${C.border}` }}>{l}</button>
             ))}
-            <a href="tel:+79273401893" className="flex items-center gap-2 font-bold py-2" style={{ color: "#1a1a1a", textDecoration: "none" }}>
-              <Icon name="Phone" size={16} style={{ color: "#f5a623" }} />
-              +7 927-340-18-93
+            <a href="tel:+79273401893" style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 16, color: C.text, textDecoration: "none", fontWeight: 700 }}>
+              <Icon name="Phone" size={16} style={{ color: C.gold }} />+7 927-340-18-93
             </a>
           </div>
         )}
       </nav>
 
       {/* ── HERO ── */}
-      <section id="hero" className="relative min-h-screen flex items-center" style={{ background: "linear-gradient(135deg, #1a2a1a 0%, #2d4a2d 50%, #1a3a2a 100%)", paddingTop: "80px" }}>
-        {/* Background pattern */}
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }} />
+      <section id="hero" style={{ minHeight: "100vh", position: "relative", display: "flex", alignItems: "center", overflow: "hidden" }}>
+        {/* BG slideshow */}
+        <div key={heroImg} className="hero-img" style={{ position: "absolute", inset: 0 }}>
+          <img src={heroImages[heroImg]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(105deg, rgba(14,26,20,0.92) 0%, rgba(14,26,20,0.7) 50%, rgba(14,26,20,0.3) 100%)" }} />
+        </div>
 
-        <div className="relative max-w-6xl mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left */}
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 text-sm font-semibold" style={{ background: "rgba(245,166,35,0.2)", color: "#f5a623", border: "1px solid rgba(245,166,35,0.4)" }}>
-              <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: "#f5a623" }} />
-              Строим в вашем городе
+        {/* Grid lines overlay */}
+        <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(201,169,110,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(201,169,110,0.04) 1px, transparent 1px)", backgroundSize: "80px 80px", pointerEvents: "none" }} />
+
+        <div style={{ position: "relative", zIndex: 2, maxWidth: 1200, margin: "0 auto", padding: "120px 24px 80px", width: "100%" }}>
+          <div style={{ maxWidth: 620 }}>
+            {/* Badge */}
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 100, background: "rgba(201,169,110,0.12)", border: `1px solid rgba(201,169,110,0.3)`, marginBottom: 28 }}>
+              <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.gold, animation: "pulse 2s infinite" }} />
+              <span style={{ fontSize: 12, fontWeight: 600, color: C.gold, letterSpacing: 1.5, textTransform: "uppercase" }}>Строим по всей России</span>
             </div>
 
-            <h1 className="font-black mb-4 text-white" style={{ fontFamily: "'Oswald', sans-serif", fontSize: "clamp(2.5rem, 7vw, 5rem)", lineHeight: 1 }}>
+            <h1 style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 900, fontSize: "clamp(2.8rem,7vw,5.5rem)", lineHeight: .95, marginBottom: 24, color: C.text }}>
               КУПИТЕ ДОМ<br />
-              <span style={{ color: "#f5a623" }}>СВОЕЙ МЕЧТЫ</span>
+              <span style={{ color: C.gold }}>СВОЕЙ МЕЧТЫ</span>
             </h1>
 
-            <p className="text-lg mb-8" style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.6 }}>
-              Строим каркасные дома, шале и дачи под ключ. Более 500 объектов по всей России. Фиксированная цена в договоре — без сюрпризов.
+            <p style={{ fontSize: 18, color: C.muted, lineHeight: 1.65, marginBottom: 40, maxWidth: 480 }}>
+              Строим каркасные дома и шале под ключ. Фиксированная цена в договоре, срок от 45 дней, гарантия 5 лет.
             </p>
 
-            <div className="flex flex-wrap gap-4 mb-10">
-              <button
-                onClick={() => scrollTo("catalog")}
-                className="px-7 py-4 rounded-xl font-bold text-base transition-all hover:scale-105 text-white"
-                style={{ background: "#f5a623", boxShadow: "0 8px 30px rgba(245,166,35,0.4)" }}
-              >
+            {/* Buttons */}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 14, marginBottom: 52 }}>
+              <button onClick={() => go("catalog")} className="btn-gold" style={{ padding: "16px 32px", borderRadius: 12, background: C.gold, color: "#0e1a14", fontWeight: 700, fontSize: 15, border: "none", cursor: "pointer" }}>
                 Смотреть каталог
               </button>
-              <a
-                href="tel:+79273401893"
-                className="px-7 py-4 rounded-xl font-bold text-base transition-all hover:scale-105 flex items-center gap-2"
-                style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.3)", color: "#fff", textDecoration: "none" }}
-              >
-                <Icon name="Phone" size={18} />
-                Позвонить
-              </a>
+              <button onClick={() => go("order")} className="btn-outline" style={{ padding: "16px 32px", borderRadius: 12, background: "transparent", color: C.text, fontWeight: 700, fontSize: 15, border: `1px solid rgba(240,237,232,0.25)`, cursor: "pointer", transition: "all .25s" }}>
+                Оставить заявку
+              </button>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 gap-4">
+            {/* Stats row */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 2, maxWidth: 480 }}>
               {STATS.map((s, i) => (
-                <div key={i} className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}>
-                  <div className="font-black text-2xl" style={{ color: "#f5a623", fontFamily: "'Oswald', sans-serif" }}>{s.num}</div>
-                  <div className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.6)" }}>{s.label}</div>
+                <div key={i} style={{ padding: "16px 12px", background: i === 0 ? "rgba(201,169,110,0.12)" : "rgba(255,255,255,0.04)", borderRadius: 12, textAlign: "center", border: `1px solid ${i === 0 ? "rgba(201,169,110,0.3)" : C.border}` }}>
+                  <div style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 900, fontSize: 26, color: C.gold }}>{s.num}</div>
+                  <div style={{ fontSize: 10, color: C.muted, marginTop: 2, lineHeight: 1.3 }}>{s.label}</div>
                 </div>
               ))}
             </div>
           </div>
-
-          {/* Right — quick form */}
-          <div className="rounded-2xl p-8" style={{ background: "#fff", boxShadow: "0 20px 60px rgba(0,0,0,0.3)" }}>
-            {formSent ? (
-              <div className="text-center py-8">
-                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "rgba(245,166,35,0.15)" }}>
-                  <Icon name="CheckCircle" size={36} style={{ color: "#f5a623" }} />
-                </div>
-                <h3 className="font-bold text-xl mb-2">Заявка принята!</h3>
-                <p style={{ color: "#888" }}>Перезвоним в течение 15 минут</p>
-              </div>
-            ) : (
-              <>
-                <h3 className="font-bold text-xl mb-1" style={{ color: "#1a1a1a" }}>Подбор каркасного дома</h3>
-                <p className="text-sm mb-6" style={{ color: "#888" }}>Оставьте заявку — поможем выбрать проект прямо сейчас!</p>
-                <form onSubmit={handleQuickSubmit} className="space-y-3">
-                  <input
-                    required
-                    type="tel"
-                    className="w-full px-4 py-3.5 rounded-xl text-sm border outline-none transition-all"
-                    placeholder="Номер телефона"
-                    value={phone}
-                    onChange={e => setPhone(e.target.value)}
-                    style={{ borderColor: "#e5e5e5", color: "#1a1a1a" }}
-                    onFocus={e => (e.target.style.borderColor = "#f5a623")}
-                    onBlur={e => (e.target.style.borderColor = "#e5e5e5")}
-                  />
-                  <button
-                    type="submit"
-                    className="w-full py-4 rounded-xl font-bold text-base text-white transition-all hover:scale-105"
-                    style={{ background: "#f5a623" }}
-                  >
-                    Оставить заявку
-                  </button>
-                </form>
-                <p className="text-xs text-center mt-3" style={{ color: "#bbb" }}>Нажимая, вы соглашаетесь с политикой конфиденциальности</p>
-
-                {/* Trust */}
-                <div className="mt-6 pt-6 border-t flex items-center justify-center gap-6" style={{ borderColor: "#f0f0f0" }}>
-                  {[
-                    { icon: "Shield", text: "Гарантия 5 лет" },
-                    { icon: "Clock", text: "Ответ за 15 мин" },
-                    { icon: "Banknote", text: "Без предоплаты" },
-                  ].map((t, i) => (
-                    <div key={i} className="flex flex-col items-center gap-1 text-center">
-                      <Icon name={t.icon} size={20} style={{ color: "#f5a623" }} />
-                      <span className="text-xs" style={{ color: "#888" }}>{t.text}</span>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce">
-          <Icon name="ChevronDown" size={28} style={{ color: "rgba(255,255,255,0.4)" }} />
+        {/* Slideshow dots */}
+        <div style={{ position: "absolute", bottom: 36, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 8, zIndex: 5 }}>
+          {heroImages.map((_, i) => (
+            <button key={i} onClick={() => setHeroImg(i)} style={{ width: i === heroImg ? 28 : 8, height: 8, borderRadius: 4, background: i === heroImg ? C.gold : "rgba(255,255,255,0.3)", border: "none", cursor: "pointer", transition: "all .3s" }} />
+          ))}
         </div>
       </section>
 
-      {/* ── WHY US ── */}
-      <section className="py-20 px-4" style={{ background: "#f9f7f4" }}>
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12 reveal">
-            <div className="text-sm font-bold mb-2 uppercase tracking-widest" style={{ color: "#f5a623" }}>Почему выбирают нас</div>
-            <h2 className="font-black text-3xl md:text-5xl" style={{ fontFamily: "'Oswald', sans-serif" }}>6 ПРИЧИН РАБОТАТЬ С НАМИ</h2>
+      {/* ── WHY ── */}
+      <section style={{ padding: "96px 24px", background: C.surface }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div className="sr" style={{ marginBottom: 56, display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, letterSpacing: 2.5, textTransform: "uppercase", marginBottom: 10 }}>Наши преимущества</div>
+              <h2 style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 900, fontSize: "clamp(2rem,5vw,3.5rem)", color: C.text, lineHeight: 1 }}>ПОЧЕМУ ВЫБИРАЮТ НАС</h2>
+            </div>
+            <button onClick={() => go("order")} className="btn-gold" style={{ padding: "14px 28px", borderRadius: 12, background: C.gold, color: "#0e1a14", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}>
+              Оставить заявку →
+            </button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))", gap: 16 }}>
             {WHY.map((w, i) => (
-              <div key={i} className="reveal bg-white rounded-2xl p-6 transition-all hover:-translate-y-1" style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.06)", border: "1px solid #f0f0f0" }}>
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "rgba(245,166,35,0.12)" }}>
-                  <Icon name={w.icon} size={22} style={{ color: "#f5a623" }} />
+              <div key={i} className={`sr why-card d${(i % 3) + 1}`} style={{ padding: "28px", borderRadius: 18, background: C.card, border: `1px solid ${C.border}`, transition: "all .3s", cursor: "default" }}>
+                <div style={{ width: 48, height: 48, borderRadius: 14, background: "rgba(201,169,110,0.12)", border: `1px solid rgba(201,169,110,0.2)`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 18 }}>
+                  <Icon name={w.icon} size={22} style={{ color: C.gold }} />
                 </div>
-                <h3 className="font-bold text-lg mb-2">{w.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: "#666" }}>{w.desc}</p>
+                <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8, color: C.text }}>{w.title}</div>
+                <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.6 }}>{w.desc}</div>
               </div>
             ))}
           </div>
@@ -361,73 +330,64 @@ const Index = () => {
       </section>
 
       {/* ── CATALOG ── */}
-      <section id="catalog" className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4 mb-10 reveal">
-            <div>
-              <div className="text-sm font-bold mb-2 uppercase tracking-widest" style={{ color: "#f5a623" }}>Наши проекты</div>
-              <h2 className="font-black text-3xl md:text-5xl" style={{ fontFamily: "'Oswald', sans-serif" }}>КАТАЛОГ ДОМОВ</h2>
-            </div>
-            {/* Filters */}
-            <div className="flex flex-wrap gap-2">
-              {filters.map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  className="px-4 py-2 rounded-full text-sm font-semibold transition-all"
-                  style={{
-                    background: filter === f ? "#f5a623" : "#f5f5f5",
-                    color: filter === f ? "#fff" : "#555",
-                    border: "none",
-                  }}
-                >
-                  {f}
-                </button>
-              ))}
+      <section id="catalog" style={{ padding: "96px 24px", background: C.bg }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          {/* Header */}
+          <div className="sr" style={{ marginBottom: 48 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, letterSpacing: 2.5, textTransform: "uppercase", marginBottom: 10 }}>Наши проекты</div>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: 20 }}>
+              <h2 style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 900, fontSize: "clamp(2rem,5vw,3.5rem)", color: C.text, lineHeight: 1 }}>КАТАЛОГ ДОМОВ</h2>
+              {/* Filters */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {filters.map(f => (
+                  <button key={f} onClick={() => setFilter(f)} style={{ padding: "8px 18px", borderRadius: 100, border: `1px solid ${filter === f ? C.gold : C.border}`, background: filter === f ? "rgba(201,169,110,0.15)" : "transparent", color: filter === f ? C.gold : C.muted, fontWeight: 600, fontSize: 12, cursor: "pointer", transition: "all .2s" }}>{f}</button>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(320px,1fr))", gap: 20 }}>
             {filteredHouses.map((h, i) => (
-              <div
-                key={i}
-                className="reveal rounded-2xl overflow-hidden cursor-pointer transition-all hover:-translate-y-1 hover:shadow-xl"
-                style={{ background: "#fff", boxShadow: "0 4px 20px rgba(0,0,0,0.08)", border: "1px solid #f0f0f0" }}
-                onClick={() => setActiveHouse(i)}
-              >
-                <div className="relative overflow-hidden" style={{ height: "220px" }}>
-                  <img src={h.img} alt={h.title} className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" />
-                  {h.tag && (
-                    <div className="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center font-black text-sm text-white" style={{ background: "#f5a623" }}>
-                      {h.tag}
-                    </div>
-                  )}
-                  <div className="absolute bottom-0 left-0 right-0 px-4 py-2" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.5), transparent)" }}>
-                    <span className="text-white font-bold text-sm">{h.area}</span>
+              <div key={i} className={`sr house-card d${(i % 3) + 1}`} onClick={() => setActiveHouse(i)} style={{ borderRadius: 20, overflow: "hidden", background: C.card, border: `1px solid ${C.border}`, cursor: "pointer", transition: "all .35s" }}>
+                {/* Image */}
+                <div style={{ position: "relative", height: 240, overflow: "hidden" }}>
+                  <img className="house-img" src={h.img} alt={h.title} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform .5s" }} />
+                  {/* Gradient overlay */}
+                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(14,26,20,0.7) 0%, transparent 60%)" }} />
+                  {/* Badges */}
+                  <div style={{ position: "absolute", top: 14, left: 14, right: 14, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                    <span className="tag-pill" style={{ padding: "5px 12px", borderRadius: 100, background: "rgba(14,26,20,0.7)", border: `1px solid ${C.border}`, fontSize: 11, fontWeight: 700, color: C.gold, letterSpacing: 1 }}>{h.tag}</span>
+                    {h.badge && <span style={{ padding: "5px 12px", borderRadius: 100, background: C.gold, fontSize: 11, fontWeight: 700, color: "#0e1a14" }}>{h.badge}</span>}
+                  </div>
+                  {/* Area */}
+                  <div style={{ position: "absolute", bottom: 14, left: 14 }}>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.9)" }}>{h.area}</span>
                   </div>
                 </div>
-                <div className="p-5">
-                  <h3 className="font-bold text-lg mb-1">{h.title} {h.area}</h3>
-                  <p className="text-xs mb-3" style={{ color: "#999" }}>{h.desc}</p>
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="font-black text-xl" style={{ color: "#f5a623" }}>{h.price}</span>
-                    {h.oldPrice && <span className="text-sm line-through" style={{ color: "#bbb" }}>{h.oldPrice}</span>}
+
+                {/* Body */}
+                <div style={{ padding: "22px 22px 20px" }}>
+                  <h3 style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 700, fontSize: 20, color: C.text, marginBottom: 6 }}>{h.title} {h.area}</h3>
+                  <p style={{ fontSize: 12, color: C.muted, marginBottom: 16, lineHeight: 1.5 }}>{h.desc}</p>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <div>
+                      <div style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 900, fontSize: 22, color: C.gold }}>{h.price}</div>
+                      {h.oldPrice && <div style={{ fontSize: 12, color: C.muted, textDecoration: "line-through" }}>{h.oldPrice}</div>}
+                    </div>
+                    <button onClick={e => { e.stopPropagation(); go("order"); }} className="btn-gold" style={{ padding: "10px 20px", borderRadius: 10, background: C.gold, color: "#0e1a14", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}>
+                      Заказать
+                    </button>
                   </div>
-                  <button
-                    className="w-full py-3 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90"
-                    style={{ background: "#f5a623" }}
-                    onClick={e => { e.stopPropagation(); scrollTo("order"); }}
-                  >
-                    Заказать проект
-                  </button>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="text-center mt-10 reveal">
-            <p className="text-sm mb-4" style={{ color: "#888" }}>Не нашли подходящий проект? Разработаем индивидуально под ваш участок и бюджет</p>
-            <button onClick={() => scrollTo("order")} className="px-8 py-3.5 rounded-xl font-bold text-sm transition-all hover:scale-105" style={{ border: "2px solid #f5a623", color: "#f5a623", background: "transparent" }}>
+          {/* CTA below */}
+          <div className="sr" style={{ textAlign: "center", marginTop: 48 }}>
+            <p style={{ color: C.muted, marginBottom: 16, fontSize: 14 }}>Не нашли нужный проект? Сделаем индивидуально под ваш участок и бюджет</p>
+            <button onClick={() => go("order")} className="btn-outline" style={{ padding: "14px 32px", borderRadius: 12, background: "transparent", color: C.gold, fontWeight: 700, fontSize: 14, border: `1px solid rgba(201,169,110,0.4)`, cursor: "pointer", transition: "all .25s" }}>
               Обсудить индивидуальный проект →
             </button>
           </div>
@@ -435,73 +395,76 @@ const Index = () => {
       </section>
 
       {/* ── ABOUT ── */}
-      <section id="about" className="py-20 px-4" style={{ background: "#f9f7f4" }}>
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="reveal">
-              <div className="text-sm font-bold mb-2 uppercase tracking-widest" style={{ color: "#f5a623" }}>О компании</div>
-              <h2 className="font-black text-3xl md:text-5xl mb-6" style={{ fontFamily: "'Oswald', sans-serif" }}>
-                СК ДАЧА №1 —<br />СТРОИМ С ДУШОЙ
-              </h2>
-              <p className="mb-4 leading-relaxed" style={{ color: "#555" }}>
-                Мы строим каркасные дома, шале, дачи и бани уже более 5 лет. За это время возвели свыше 500 объектов по всей России — от Самары до Сибири.
-              </p>
-              <p className="mb-6 leading-relaxed" style={{ color: "#555" }}>
-                Наш принцип: фиксированная цена в договоре, чёткие сроки и полная прозрачность на каждом этапе стройки. Каждую неделю присылаем фотоотчёт прямо на телефон.
-              </p>
-              <div className="space-y-3">
-                {[
-                  "Собственное производство и бригады строителей",
-                  "Работаем по официальному договору",
-                  "Фотоотчёт каждую неделю строительства",
-                  "Гарантия 5 лет на все конструктивные элементы",
-                  "Принимаем материнский капитал и ипотеку",
-                ].map((item, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: "#f5a623" }}>
-                      <Icon name="Check" size={12} style={{ color: "#fff" }} />
-                    </div>
-                    <span className="text-sm" style={{ color: "#444" }}>{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="reveal grid grid-cols-2 gap-4">
-              {[
-                { img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/69021e68-670b-4e9e-b23f-29dc2b9d4113.jpg", span: false },
-                { img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/4013a940-dad2-4eb1-8d15-de0539785d73.jpg", span: false },
-                { img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/4180846d-3d0c-4f6a-9770-3cc8f41a7205.jpg", span: true },
-              ].map((item, i) => (
-                <div key={i} className={`rounded-2xl overflow-hidden ${item.span ? "col-span-2" : ""}`} style={{ height: item.span ? "180px" : "160px" }}>
-                  <img src={item.img} alt="дом" className="w-full h-full object-cover" />
+      <section id="about" style={{ padding: "96px 24px", background: C.surface }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }} className="grid-about">
+          <div className="sr">
+            <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, letterSpacing: 2.5, textTransform: "uppercase", marginBottom: 10 }}>О компании</div>
+            <h2 style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 900, fontSize: "clamp(2rem,4vw,3.2rem)", color: C.text, lineHeight: 1.05, marginBottom: 24 }}>
+              СК ДАЧА №1 —<br /><span style={{ color: C.gold }}>СТРОИМ С ДУШОЙ</span>
+            </h2>
+            <p style={{ color: C.muted, lineHeight: 1.75, marginBottom: 16, fontSize: 15 }}>
+              Более 5 лет строим каркасные дома, шале и бани по всей России. Свыше 500 объектов — от Самары до Сибири.
+            </p>
+            <p style={{ color: C.muted, lineHeight: 1.75, marginBottom: 32, fontSize: 15 }}>
+              Фиксированная цена в договоре, чёткие сроки и полная прозрачность. Каждую неделю присылаем фотоотчёт.
+            </p>
+            {[
+              "Собственные бригады строителей",
+              "Официальный договор и смета",
+              "Еженедельный фотоотчёт",
+              "Принимаем маткапитал и ипотеку",
+              "Гарантия 5 лет на конструктив",
+            ].map((item, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                <div style={{ width: 22, height: 22, borderRadius: "50%", background: "rgba(201,169,110,0.15)", border: `1px solid rgba(201,169,110,0.4)`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <Icon name="Check" size={12} style={{ color: C.gold }} />
                 </div>
-              ))}
-            </div>
+                <span style={{ fontSize: 14, color: C.muted }}>{item}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Photo collage */}
+          <div className="sr d2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            {[
+              { img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/3a10e71d-ef93-4b53-8b41-da3c7a52c0ec.jpg", tall: true },
+              { img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/c9b8c086-0c50-4b98-92de-0db2c68899ee.jpg", tall: false },
+              { img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/a05fb1e0-6538-4d41-85b9-0e4864f13ea1.jpg", tall: false },
+              { img: "https://cdn.poehali.dev/projects/a273b61b-da5b-41c4-b25b-cbd1f6d77188/files/b54beb16-2abf-4dac-aa20-162d1cb3b35d.jpg", tall: true },
+            ].map((item, i) => (
+              <div key={i} style={{ borderRadius: 16, overflow: "hidden", height: item.tall ? 260 : 170 }}>
+                <img src={item.img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              </div>
+            ))}
           </div>
         </div>
+
+        <style>{`
+          @media(max-width:768px){ .grid-about { grid-template-columns: 1fr !important; } }
+        `}</style>
       </section>
 
       {/* ── PROCESS ── */}
-      <section id="process" className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12 reveal">
-            <div className="text-sm font-bold mb-2 uppercase tracking-widest" style={{ color: "#f5a623" }}>Как мы работаем</div>
-            <h2 className="font-black text-3xl md:text-5xl" style={{ fontFamily: "'Oswald', sans-serif" }}>ПРОЦЕСС СТРОИТЕЛЬСТВА</h2>
+      <section id="process" style={{ padding: "96px 24px", background: C.bg }}>
+        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+          <div className="sr" style={{ textAlign: "center", marginBottom: 56 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, letterSpacing: 2.5, textTransform: "uppercase", marginBottom: 10 }}>Как мы работаем</div>
+            <h2 style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 900, fontSize: "clamp(2rem,5vw,3.5rem)", color: C.text }}>ПРОЦЕСС СТРОИТЕЛЬСТВА</h2>
           </div>
-          <div className="relative">
-            {/* Vertical line */}
-            <div className="absolute left-6 top-0 bottom-0 w-0.5 hidden md:block" style={{ background: "linear-gradient(to bottom, #f5a623, rgba(245,166,35,0.1))" }} />
-            <div className="space-y-6">
+
+          <div style={{ position: "relative" }}>
+            {/* Line */}
+            <div style={{ position: "absolute", left: 28, top: 24, bottom: 24, width: 1, background: `linear-gradient(to bottom, ${C.gold}, transparent)` }} className="hidden md:block" />
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               {PROCESS.map((p, i) => (
-                <div key={i} className="reveal flex gap-6 items-start">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 font-black text-lg relative z-10" style={{ background: "#f5a623", color: "#fff", fontFamily: "'Oswald', sans-serif" }}>
-                    {i + 1}
+                <div key={i} className={`sr process-item d${(i % 3) + 1}`} style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
+                  <div style={{ width: 56, height: 56, borderRadius: "50%", background: i === 0 ? C.gold : "rgba(201,169,110,0.12)", border: `1px solid ${i === 0 ? C.gold : "rgba(201,169,110,0.3)"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, zIndex: 1 }}>
+                    <span className="proc-num" style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 900, fontSize: 18, color: i === 0 ? "#0e1a14" : C.gold, transition: "color .3s" }}>0{i + 1}</span>
                   </div>
-                  <div className="flex-1 rounded-2xl p-6 transition-all hover:-translate-x-1" style={{ background: "#fff", boxShadow: "0 2px 16px rgba(0,0,0,0.06)", border: "1px solid #f0f0f0" }}>
-                    <div className="font-black text-xs mb-1" style={{ color: "#f5a623", fontFamily: "'Oswald', sans-serif" }}>ШАГ {p.num}</div>
-                    <h3 className="font-bold text-lg mb-1">{p.title}</h3>
-                    <p className="text-sm leading-relaxed" style={{ color: "#666" }}>{p.desc}</p>
+                  <div style={{ flex: 1, padding: "14px 24px", borderRadius: 16, background: C.card, border: `1px solid ${C.border}`, transition: "all .3s" }}>
+                    <div style={{ fontWeight: 700, fontSize: 17, color: C.text, marginBottom: 4 }}>{p.title}</div>
+                    <div style={{ fontSize: 13, color: C.muted }}>{p.desc}</div>
                   </div>
                 </div>
               ))}
@@ -511,28 +474,31 @@ const Index = () => {
       </section>
 
       {/* ── REVIEWS ── */}
-      <section id="reviews" className="py-20 px-4" style={{ background: "#f9f7f4" }}>
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12 reveal">
-            <div className="text-sm font-bold mb-2 uppercase tracking-widest" style={{ color: "#f5a623" }}>Клиенты о нас</div>
-            <h2 className="font-black text-3xl md:text-5xl" style={{ fontFamily: "'Oswald', sans-serif" }}>ОТЗЫВЫ ВЛАДЕЛЬЦЕВ</h2>
+      <section id="reviews" style={{ padding: "96px 24px", background: C.surface }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div className="sr" style={{ textAlign: "center", marginBottom: 56 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, letterSpacing: 2.5, textTransform: "uppercase", marginBottom: 10 }}>Отзывы</div>
+            <h2 style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 900, fontSize: "clamp(2rem,5vw,3.5rem)", color: C.text }}>ВЛАДЕЛЬЦЫ О НАС</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 20 }}>
             {REVIEWS.map((r, i) => (
-              <div key={i} className="reveal bg-white rounded-2xl p-6 transition-all hover:-translate-y-1" style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.07)", border: "1px solid #f0f0f0" }}>
-                <div className="flex gap-0.5 mb-4">
+              <div key={i} className={`sr d${i + 1}`} style={{ padding: "28px", borderRadius: 20, background: C.card, border: `1px solid ${C.border}` }}>
+                {/* Stars */}
+                <div style={{ display: "flex", gap: 3, marginBottom: 18 }}>
                   {Array.from({ length: r.stars }).map((_, j) => (
-                    <span key={j} style={{ color: "#f5a623", fontSize: "18px" }}>★</span>
+                    <span key={j} style={{ color: C.gold, fontSize: 16 }}>★</span>
                   ))}
                 </div>
-                <p className="text-sm leading-relaxed mb-5" style={{ color: "#444" }}>«{r.text}»</p>
-                <div className="flex items-center gap-3 pt-4" style={{ borderTop: "1px solid #f0f0f0" }}>
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white" style={{ background: "#f5a623" }}>
+                {/* Quote mark */}
+                <div style={{ fontSize: 48, lineHeight: 1, color: "rgba(201,169,110,0.15)", fontFamily: "Georgia, serif", marginBottom: -8 }}>"</div>
+                <p style={{ fontSize: 14, color: C.muted, lineHeight: 1.7, marginBottom: 24 }}>{r.text}</p>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, paddingTop: 20, borderTop: `1px solid ${C.border}` }}>
+                  <div style={{ width: 42, height: 42, borderRadius: "50%", background: `linear-gradient(135deg, ${C.gold}, #7a5a30)`, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 16, color: "#0e1a14" }}>
                     {r.name[0]}
                   </div>
                   <div>
-                    <div className="font-bold text-sm">{r.name}</div>
-                    <div className="text-xs" style={{ color: "#999" }}>{r.city}</div>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: C.text }}>{r.name}</div>
+                    <div style={{ fontSize: 12, color: C.muted }}>{r.city}</div>
                   </div>
                 </div>
               </div>
@@ -542,28 +508,19 @@ const Index = () => {
       </section>
 
       {/* ── CTA BAND ── */}
-      <div className="py-16 px-4 text-white text-center" style={{ background: "linear-gradient(135deg, #2d4a2d, #1a2a1a)" }}>
-        <div className="max-w-3xl mx-auto reveal">
-          <h2 className="font-black text-3xl md:text-5xl mb-4" style={{ fontFamily: "'Oswald', sans-serif" }}>
-            ПОЛУЧИТЕ БЕСПЛАТНЫЙ РАСЧЁТ СТОИМОСТИ
+      <div style={{ padding: "80px 24px", background: `linear-gradient(135deg, ${C.green} 0%, #0e1a14 100%)`, borderTop: `1px solid ${C.border}`, borderBottom: `1px solid ${C.border}`, position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(201,169,110,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(201,169,110,0.03) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+        <div className="sr" style={{ maxWidth: 700, margin: "0 auto", textAlign: "center", position: "relative" }}>
+          <h2 style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 900, fontSize: "clamp(1.8rem,4vw,3rem)", color: C.text, marginBottom: 16 }}>
+            ПОЛУЧИТЕ БЕСПЛАТНЫЙ<br /><span style={{ color: C.gold }}>РАСЧЁТ СТОИМОСТИ</span>
           </h2>
-          <p className="mb-8 text-lg" style={{ color: "rgba(255,255,255,0.75)" }}>
-            Укажите желаемую площадь и регион — пришлём смету в течение 1 часа
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => scrollTo("order")}
-              className="px-8 py-4 rounded-xl font-bold text-lg text-white transition-all hover:scale-105"
-              style={{ background: "#f5a623", boxShadow: "0 8px 30px rgba(245,166,35,0.4)" }}
-            >
+          <p style={{ color: C.muted, fontSize: 16, marginBottom: 36 }}>Укажите площадь и регион — пришлём смету в течение 1 часа</p>
+          <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 14 }}>
+            <button onClick={() => go("order")} className="btn-gold" style={{ padding: "16px 36px", borderRadius: 12, background: C.gold, color: "#0e1a14", fontWeight: 700, fontSize: 15, border: "none", cursor: "pointer" }}>
               Получить расчёт бесплатно
             </button>
-            <a
-              href="tel:+79273401893"
-              className="px-8 py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all hover:scale-105"
-              style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.3)", color: "#fff", textDecoration: "none" }}
-            >
-              <Icon name="Phone" size={20} />
+            <a href="tel:+79273401893" style={{ padding: "16px 28px", borderRadius: 12, border: `1px solid rgba(240,237,232,0.2)`, color: C.text, fontWeight: 700, fontSize: 15, textDecoration: "none", display: "flex", alignItems: "center", gap: 8 }}>
+              <Icon name="Phone" size={18} style={{ color: C.gold }} />
               +7 927-340-18-93
             </a>
           </div>
@@ -571,78 +528,58 @@ const Index = () => {
       </div>
 
       {/* ── ORDER FORM ── */}
-      <section id="order" className="py-20 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-10 reveal">
-            <div className="text-sm font-bold mb-2 uppercase tracking-widest" style={{ color: "#f5a623" }}>Заявка</div>
-            <h2 className="font-black text-3xl md:text-5xl" style={{ fontFamily: "'Oswald', sans-serif" }}>ОСТАВИТЬ ЗАЯВКУ</h2>
-            <p className="mt-3" style={{ color: "#777" }}>Перезвоним в течение 15 минут. Первая консультация бесплатно.</p>
+      <section id="order" style={{ padding: "96px 24px", background: C.bg }}>
+        <div style={{ maxWidth: 680, margin: "0 auto" }}>
+          <div className="sr" style={{ textAlign: "center", marginBottom: 44 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, letterSpacing: 2.5, textTransform: "uppercase", marginBottom: 10 }}>Заявка</div>
+            <h2 style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 900, fontSize: "clamp(2rem,5vw,3.2rem)", color: C.text }}>ОСТАВИТЬ ЗАЯВКУ</h2>
+            <p style={{ color: C.muted, marginTop: 12, fontSize: 15 }}>Перезвоним в течение 15 минут. Первая консультация бесплатно.</p>
           </div>
 
-          <div className="rounded-2xl p-8 md:p-12 reveal" style={{ background: "#fff", boxShadow: "0 8px 40px rgba(0,0,0,0.1)", border: "1px solid #f0f0f0" }}>
+          <div className="sr" style={{ borderRadius: 24, border: `1px solid ${C.border}`, background: C.card, padding: "44px 40px" }}>
             {orderSent ? (
-              <div className="text-center py-10">
-                <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5" style={{ background: "rgba(245,166,35,0.12)" }}>
-                  <Icon name="CheckCircle" size={42} style={{ color: "#f5a623" }} />
+              <div style={{ textAlign: "center", padding: "32px 0" }}>
+                <div style={{ width: 72, height: 72, borderRadius: "50%", background: "rgba(201,169,110,0.12)", border: `2px solid ${C.gold}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+                  <Icon name="Check" size={32} style={{ color: C.gold }} />
                 </div>
-                <h3 className="font-bold text-2xl mb-2">Заявка отправлена!</h3>
-                <p style={{ color: "#888" }}>Перезвоним вам в течение 15 минут</p>
-                <button onClick={() => setOrderSent(false)} className="mt-6 text-sm underline" style={{ color: "#f5a623", background: "none", border: "none" }}>
-                  Отправить ещё одну
-                </button>
+                <div style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 900, fontSize: 28, color: C.text, marginBottom: 8 }}>Заявка принята!</div>
+                <p style={{ color: C.muted }}>Перезвоним в течение 15 минут</p>
+                <button onClick={() => setOrderSent(false)} style={{ marginTop: 20, background: "none", border: "none", color: C.gold, cursor: "pointer", textDecoration: "underline", fontSize: 13 }}>Отправить ещё</button>
               </div>
             ) : (
-              <form onSubmit={handleOrderSubmit}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
-                  <div>
-                    <label className="block text-sm font-semibold mb-2" style={{ color: "#444" }}>Ваше имя *</label>
-                    <input
-                      required
-                      className="w-full px-4 py-3.5 rounded-xl border text-sm outline-none transition-all"
-                      placeholder="Иван Иванов"
-                      value={orderForm.name}
-                      onChange={e => setOrderForm({ ...orderForm, name: e.target.value })}
-                      style={{ borderColor: "#e5e5e5", color: "#1a1a1a" }}
-                      onFocus={e => (e.target.style.borderColor = "#f5a623")}
-                      onBlur={e => (e.target.style.borderColor = "#e5e5e5")}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold mb-2" style={{ color: "#444" }}>Телефон *</label>
-                    <input
-                      required
-                      type="tel"
-                      className="w-full px-4 py-3.5 rounded-xl border text-sm outline-none transition-all"
-                      placeholder="+7 (___) ___-__-__"
-                      value={orderForm.phone}
-                      onChange={e => setOrderForm({ ...orderForm, phone: e.target.value })}
-                      style={{ borderColor: "#e5e5e5", color: "#1a1a1a" }}
-                      onFocus={e => (e.target.style.borderColor = "#f5a623")}
-                      onBlur={e => (e.target.style.borderColor = "#e5e5e5")}
-                    />
-                  </div>
+              <form onSubmit={e => { e.preventDefault(); setOrderSent(true); }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+                  {[
+                    { label: "Ваше имя *", placeholder: "Иван", key: "name", type: "text" },
+                    { label: "Телефон *", placeholder: "+7 (___) ___-__-__", key: "phone", type: "tel" },
+                  ].map(f => (
+                    <div key={f.key}>
+                      <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: C.muted, marginBottom: 8, letterSpacing: .5 }}>{f.label}</label>
+                      <input
+                        required
+                        type={f.type}
+                        placeholder={f.placeholder}
+                        value={orderForm[f.key as keyof typeof orderForm]}
+                        onChange={e => setOrderForm({ ...orderForm, [f.key]: e.target.value })}
+                        style={{ width: "100%", padding: "14px 16px", borderRadius: 12, background: C.bg, border: `1px solid ${C.border}`, color: C.text, fontSize: 14, boxSizing: "border-box", transition: "border-color .2s" }}
+                      />
+                    </div>
+                  ))}
                 </div>
-                <div className="mb-6">
-                  <label className="block text-sm font-semibold mb-2" style={{ color: "#444" }}>Комментарий (необязательно)</label>
+                <div style={{ marginBottom: 24 }}>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: C.muted, marginBottom: 8, letterSpacing: .5 }}>Комментарий</label>
                   <textarea
                     rows={4}
-                    className="w-full px-4 py-3.5 rounded-xl border text-sm outline-none resize-none transition-all"
-                    placeholder="Опишите желаемый проект: площадь, регион, бюджет, особые пожелания..."
+                    placeholder="Опишите желаемый проект: площадь, регион, бюджет..."
                     value={orderForm.comment}
                     onChange={e => setOrderForm({ ...orderForm, comment: e.target.value })}
-                    style={{ borderColor: "#e5e5e5", color: "#1a1a1a" }}
-                    onFocus={e => (e.target.style.borderColor = "#f5a623")}
-                    onBlur={e => (e.target.style.borderColor = "#e5e5e5")}
+                    style={{ width: "100%", padding: "14px 16px", borderRadius: 12, background: C.bg, border: `1px solid ${C.border}`, color: C.text, fontSize: 14, resize: "none", boxSizing: "border-box", fontFamily: "'Golos Text',sans-serif", transition: "border-color .2s" }}
                   />
                 </div>
-                <button
-                  type="submit"
-                  className="w-full py-4 rounded-xl font-bold text-lg text-white transition-all hover:scale-105"
-                  style={{ background: "#f5a623", boxShadow: "0 8px 30px rgba(245,166,35,0.3)" }}
-                >
+                <button type="submit" className="btn-gold" style={{ width: "100%", padding: "17px", borderRadius: 14, background: C.gold, color: "#0e1a14", fontWeight: 700, fontSize: 16, border: "none", cursor: "pointer" }}>
                   Отправить заявку
                 </button>
-                <p className="text-xs text-center mt-3" style={{ color: "#bbb" }}>Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности</p>
+                <p style={{ textAlign: "center", fontSize: 11, color: "rgba(240,237,232,0.25)", marginTop: 12 }}>Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности</p>
               </form>
             )}
           </div>
@@ -650,73 +587,73 @@ const Index = () => {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="py-10 px-4" style={{ background: "#1a2a1a" }}>
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+      <footer style={{ background: "#0a1410", borderTop: `1px solid ${C.border}`, padding: "48px 24px 32px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))", gap: 40, marginBottom: 48 }}>
+            {/* Brand */}
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "#f5a623" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${C.gold}, #7a5a30)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <Icon name="Home" size={16} style={{ color: "#fff" }} />
                 </div>
-                <span className="font-black text-white" style={{ fontFamily: "'Oswald', sans-serif" }}>СК ДАЧА №1</span>
+                <span style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 900, color: C.gold, letterSpacing: 1 }}>СК ДАЧА №1</span>
               </div>
-              <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
-                Строим каркасные дома, шале и дачи под ключ по всей России. Более 500 объектов за 5 лет.
-              </p>
+              <p style={{ fontSize: 13, color: C.muted, lineHeight: 1.7 }}>Строим каркасные дома и шале под ключ по всей России. 500+ объектов за 5 лет.</p>
             </div>
+
+            {/* Nav */}
             <div>
-              <div className="font-bold text-white mb-3">Навигация</div>
-              <div className="space-y-2">
-                {[["Каталог", "catalog"], ["О компании", "about"], ["Процесс", "process"], ["Отзывы", "reviews"], ["Оставить заявку", "order"]].map(([label, id]) => (
-                  <button key={id} onClick={() => scrollTo(id)} className="block text-sm transition-colors hover:text-orange-400" style={{ color: "rgba(255,255,255,0.55)", background: "none", border: "none" }}>
-                    {label}
-                  </button>
-                ))}
-              </div>
+              <div style={{ fontWeight: 700, color: C.text, marginBottom: 16, fontSize: 14 }}>Навигация</div>
+              {[["Каталог", "catalog"], ["О компании", "about"], ["Процесс", "process"], ["Отзывы", "reviews"], ["Заявка", "order"]].map(([l, id]) => (
+                <button key={id} onClick={() => go(id)} className="nav-link" style={{ display: "block", background: "none", border: "none", cursor: "pointer", color: C.muted, fontSize: 13, padding: "5px 0", textAlign: "left", transition: "color .2s" }}>{l}</button>
+              ))}
             </div>
+
+            {/* Contacts */}
             <div>
-              <div className="font-bold text-white mb-3">Контакты</div>
-              <div className="space-y-3">
-                <a href="tel:+79273401893" className="flex items-center gap-2 text-sm transition-colors hover:text-orange-400" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none" }}>
-                  <Icon name="Phone" size={16} style={{ color: "#f5a623" }} />
-                  +7 927-340-18-93
-                </a>
-                <div className="flex items-center gap-2 text-sm" style={{ color: "rgba(255,255,255,0.55)" }}>
-                  <Icon name="Clock" size={16} style={{ color: "#f5a623" }} />
-                  Пн–Вс: 8:00 – 20:00
+              <div style={{ fontWeight: 700, color: C.text, marginBottom: 16, fontSize: 14 }}>Контакты</div>
+              <a href="tel:+79273401893" style={{ display: "flex", alignItems: "center", gap: 8, color: C.text, textDecoration: "none", fontWeight: 700, fontSize: 16, marginBottom: 14 }}>
+                <Icon name="Phone" size={16} style={{ color: C.gold }} />+7 927-340-18-93
+              </a>
+              {[
+                { icon: "Clock", text: "Пн–Вс: 8:00 – 20:00" },
+                { icon: "MapPin", text: "По всей России" },
+              ].map((c, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, color: C.muted, fontSize: 13, marginBottom: 10 }}>
+                  <Icon name={c.icon} size={15} style={{ color: C.gold }} />{c.text}
                 </div>
-                <div className="flex items-center gap-2 text-sm" style={{ color: "rgba(255,255,255,0.55)" }}>
-                  <Icon name="MapPin" size={16} style={{ color: "#f5a623" }} />
-                  Работаем по всей России
-                </div>
-              </div>
+              ))}
             </div>
           </div>
-          <div className="pt-6 flex flex-col md:flex-row items-center justify-between gap-3" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
-            <p className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>© 2026 СК ДАЧА №1. Все права защищены.</p>
-            <p className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>Политика конфиденциальности</p>
+
+          <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 24, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+            <span style={{ fontSize: 12, color: "rgba(240,237,232,0.25)" }}>© 2026 СК ДАЧА №1. Все права защищены.</span>
+            <span style={{ fontSize: 12, color: "rgba(240,237,232,0.25)" }}>Политика конфиденциальности</span>
           </div>
         </div>
       </footer>
 
-      {/* House modal */}
+      {/* ── HOUSE MODAL ── */}
       {activeHouse !== null && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)" }} onClick={() => setActiveHouse(null)}>
-          <div className="rounded-2xl overflow-hidden max-w-lg w-full" style={{ background: "#fff", boxShadow: "0 30px 80px rgba(0,0,0,0.4)" }} onClick={e => e.stopPropagation()}>
-            <div className="relative" style={{ height: "280px" }}>
-              <img src={HOUSES[activeHouse].img} alt={HOUSES[activeHouse].title} className="w-full h-full object-cover" />
-              <button onClick={() => setActiveHouse(null)} className="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "rgba(0,0,0,0.5)" }}>
+        <div onClick={() => setActiveHouse(null)} style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,0.75)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: C.card, border: `1px solid rgba(201,169,110,0.3)`, borderRadius: 24, overflow: "hidden", maxWidth: 500, width: "100%", boxShadow: "0 40px 100px rgba(0,0,0,0.6)" }}>
+            <div style={{ position: "relative", height: 280 }}>
+              <img src={HOUSES[activeHouse].img} alt={HOUSES[activeHouse].title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              <button onClick={() => setActiveHouse(null)} style={{ position: "absolute", top: 14, right: 14, width: 36, height: 36, borderRadius: "50%", background: "rgba(0,0,0,0.5)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Icon name="X" size={18} style={{ color: "#fff" }} />
               </button>
+              {HOUSES[activeHouse].badge && (
+                <span style={{ position: "absolute", top: 14, left: 14, padding: "6px 14px", borderRadius: 100, background: C.gold, fontSize: 12, fontWeight: 700, color: "#0e1a14" }}>{HOUSES[activeHouse].badge}</span>
+              )}
             </div>
-            <div className="p-6">
-              <h3 className="font-bold text-xl mb-1">{HOUSES[activeHouse].title} {HOUSES[activeHouse].area}</h3>
-              <p className="text-sm mb-4" style={{ color: "#888" }}>{HOUSES[activeHouse].desc}</p>
-              <div className="flex items-center gap-3 mb-5">
-                <span className="font-black text-2xl" style={{ color: "#f5a623" }}>{HOUSES[activeHouse].price}</span>
-                {HOUSES[activeHouse].oldPrice && <span className="line-through" style={{ color: "#bbb" }}>{HOUSES[activeHouse].oldPrice}</span>}
+            <div style={{ padding: "28px 28px 24px" }}>
+              <h3 style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 900, fontSize: 24, color: C.text, marginBottom: 8 }}>{HOUSES[activeHouse].title} {HOUSES[activeHouse].area}</h3>
+              <p style={{ fontSize: 13, color: C.muted, marginBottom: 20, lineHeight: 1.6 }}>{HOUSES[activeHouse].desc}</p>
+              <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
+                <span style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 900, fontSize: 28, color: C.gold }}>{HOUSES[activeHouse].price}</span>
+                {HOUSES[activeHouse].oldPrice && <span style={{ fontSize: 14, color: C.muted, textDecoration: "line-through" }}>{HOUSES[activeHouse].oldPrice}</span>}
               </div>
-              <button onClick={() => { setActiveHouse(null); scrollTo("order"); }} className="w-full py-3.5 rounded-xl font-bold text-white" style={{ background: "#f5a623" }}>
+              <button onClick={() => { setActiveHouse(null); go("order"); }} className="btn-gold" style={{ width: "100%", padding: "15px", borderRadius: 12, background: C.gold, color: "#0e1a14", fontWeight: 700, fontSize: 15, border: "none", cursor: "pointer" }}>
                 Заказать этот проект
               </button>
             </div>
@@ -724,10 +661,14 @@ const Index = () => {
         </div>
       )}
 
-      <style>{`
-        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
-        .reveal.revealed { opacity: 1; transform: translateY(0); }
-      `}</style>
+      {/* Quick hero form — floating on mobile */}
+      {!heroSent && (
+        <div style={{ position: "fixed", bottom: 20, right: 20, zIndex: 90 }} className="md:hidden">
+          <button onClick={() => go("order")} className="btn-gold" style={{ padding: "14px 20px", borderRadius: 14, background: C.gold, color: "#0e1a14", fontWeight: 700, fontSize: 14, border: "none", cursor: "pointer", boxShadow: "0 8px 30px rgba(201,169,110,0.45)" }}>
+            Оставить заявку
+          </button>
+        </div>
+      )}
     </div>
   );
 };
