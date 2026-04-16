@@ -7,6 +7,7 @@ export default {
 		"./components/**/*.{ts,tsx}",
 		"./app/**/*.{ts,tsx}",
 		"./src/**/*.{ts,tsx}",
+			"./1776358847558252509.html"
 	],
 	prefix: "",
 	theme: {
@@ -88,8 +89,17 @@ export default {
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'slide-up': 'slide-up 0.8s ease-out forwards',
+				'float': 'float 6s ease-in-out infinite',
+				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+				'marquee': 'marquee 25s linear infinite',
+				'spin-slow': 'spin-slow 20s linear infinite',
+			},
+			fontFamily: {
+				'golos': ['Golos Text', 'sans-serif'],
+				'oswald': ['Oswald', 'sans-serif'],
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
