@@ -89,8 +89,8 @@ const REVIEWS = [
 ];
 
 const STATS = [
-  { num: "500+", label: "домов построено" },
-  { num: "5", label: "лет на рынке" },
+  { num: "500+", label: "объектов построено" },
+  { num: "18", label: "лет на рынке" },
   { num: "45", label: "дней до сдачи" },
   { num: "5", label: "лет гарантии" },
 ];
@@ -261,7 +261,7 @@ const Index = () => {
             {/* Badge */}
             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 100, background: "rgba(201,169,110,0.12)", border: `1px solid rgba(201,169,110,0.3)`, marginBottom: 28 }}>
               <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.gold, animation: "pulse 2s infinite" }} />
-              <span style={{ fontSize: 12, fontWeight: 600, color: C.gold, letterSpacing: 1.5, textTransform: "uppercase" }}>Строим по всей России</span>
+              <span style={{ fontSize: 12, fontWeight: 600, color: C.gold, letterSpacing: 1.5, textTransform: "uppercase" }}>18 лет в строительстве · По всей России</span>
             </div>
 
             <h1 style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 900, fontSize: "clamp(2.8rem,7vw,5.5rem)", lineHeight: .95, marginBottom: 24, color: C.text }}>
@@ -269,9 +269,18 @@ const Index = () => {
               <span style={{ color: C.gold }}>СВОЕЙ МЕЧТЫ</span>
             </h1>
 
-            <p style={{ fontSize: 18, color: C.muted, lineHeight: 1.65, marginBottom: 40, maxWidth: 480 }}>
-              Строим каркасные дома и шале под ключ. Фиксированная цена в договоре, срок от 45 дней, гарантия 5 лет.
+            <p style={{ fontSize: 18, color: C.muted, lineHeight: 1.65, marginBottom: 16, maxWidth: 480 }}>
+              Строим каркасные дома, шале и бани под ключ. Эксклюзивные проекты класса премиум и комфорт.
             </p>
+
+            {/* Key points */}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 36 }}>
+              {["Фиксированная цена", "Срок от 45 дней", "Гарантия 5 лет", "Юридическое сопровождение"].map((t, i) => (
+                <span key={i} style={{ padding: "6px 14px", borderRadius: 100, border: `1px solid rgba(201,169,110,0.25)`, fontSize: 12, color: C.muted, fontWeight: 500 }}>
+                  ✓ {t}
+                </span>
+              ))}
+            </div>
 
             {/* Buttons */}
             <div style={{ display: "flex", flexWrap: "wrap", gap: 14, marginBottom: 52 }}>
